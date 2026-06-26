@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="School Irish phrasebook soundboard for Ulster Irish learners">
+  <meta name="theme-color" content="#2d5016">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <title>School Irish Soundboard</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #f5f1e8 0%, #e8f0d8 100%);
+      color: #2d3436;
+      min-height: 100vh;
+      padding: 1rem;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 2rem;
+      padding: 1rem 0;
+    }
+
+    h1 {
+      font-size: 2rem;
+      color: #2d5016;
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      font-size: 0.95rem;
+      color: #666;
+      margin-bottom: 1rem;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .search-bar {
+      flex: 1;
+      min-width: 200px;
+      max-width: 500px;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 0.75rem;
+      font-size: 1rem;
+      border: 2px solid #d4c4a0;
+      border-radius: 8px;
+      background: #fffbf7;
+      color: #2d3436;
+    }
+
+    input[type="text"]:focus {
+      outline: none;
+      border-color: #2d5016;
+      box-shadow: 0 0 0 3px rgba(45, 80, 22, 0.1);
+    }
+
+    .toggle-group {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    button {
+      padding: 0.75rem 1.25rem;
+      font-size: 0.95rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s;
+      background: #2d5016;
+      color: white;
+    }
+
+    button:hover {
+      background: #1f3a0f;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(45, 80, 22, 0.2);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    button:focus {
+      outline: 2px solid #2d5016;
+      outline-offset: 2px;
+    }
+
+    button.secondary {
+      background: #d4a574;
+      color: #2d3436;
+    }
+
+    button.secondary:hover {
+      background: #c9935f;
+    }
+
+    button.toggle-active {
+      background: #6ba82f;
+    }
+
+    .status {
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      font-size: 0.9rem;
+      display: none;
+    }
+
+    .status.show {
+      display: block;
+    }
+
+    .status.info {
+      background: #e3f2fd;
+      color: #1565c0;
+      border: 1px solid #90caf9;
+    }
+
+    .status.warning {
+      background: #fff3e0;
+      color: #e65100;
+      border: 1px solid #ffb74d;
+    }
+
+    .status.success {
+      background: #e8f5e9;
+      color: #2e7d32;
+      border: 1px solid #81c784;
+    }
+
+    .categories {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .category {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      transition: box-shadow 0.2s;
+    }
+
+    .category:hover {
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    }
+
+    .category-header {
+      background: linear-gradient(135deg, #2d5016 0%, #3a6a1f 100%);
+      color: white;
+      padding: 1rem 1.5rem;
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+
+    .category-count {
+      font-size: 0.85rem;
+      opacity: 0.9;
+      margin-left: 0.5rem;
+    }
+
+    .phrases {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1rem;
+      padding: 1.5rem;
+    }
+
+    .phrase-card {
+      background: #fffbf7;
+      border: 2px solid #e8dcc8;
+      border-radius: 12px;
+      padding: 1.25rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      min-height: 200px;
+      position: relative;
+    }
+
+    .phrase-card:hover {
+      border-color: #d4a574;
+      box-shadow: 0 4px 12px rgba(212, 165, 116, 0.2);
+    }
+
+    .phrase-card.playing {
+      background: #f0f8e8;
+      border-color: #6ba82f;
+    }
+
+    .phrase-english {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #2d5016;
+      margin-bottom: 0.75rem;
+      flex-grow: 1;
+    }
+
+    .phrase-pronunciation {
+      font-size: 0.95rem;
+      color: #666;
+      font-style: italic;
+      margin-bottom: 0.75rem;
+      font-family: 'Courier New', monospace;
+      background: #f5f1e8;
+      padding: 0.5rem 0.75rem;
+      border-radius: 6px;
+      display: none;
+    }
+
+    .phrase-pronunciation.show {
+      display: block;
+    }
+
+    .phrase-irish {
+      font-size: 1.1rem;
+      color: #2d3436;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      display: none;
+    }
+
+    .phrase-irish.show {
+      display: block;
+    }
+
+    .phrase-controls {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .play-btn {
+      flex: 1;
+      padding: 0.75rem;
+      background: #2d5016;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s;
+      font-size: 0.9rem;
+    }
+
+    .play-btn:hover {
+      background: #1f3a0f;
+    }
+
+    .play-btn:active {
+      transform: scale(0.98);
+    }
+
+    .play-btn.loading::after {
+      content: ' ⏳';
+    }
+
+    .delete-btn {
+      padding: 0.75rem 0.5rem;
+      background: #ff6b6b;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      display: none;
+    }
+
+    .phrase-card.custom .delete-btn {
+      display: block;
+    }
+
+    .delete-btn:hover {
+      background: #ff5252;
+    }
+
+    .empty-state {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 3rem 1rem;
+      color: #999;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+    }
+
+    .modal.show {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      max-width: 500px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal h2 {
+      margin-bottom: 1.5rem;
+      color: #2d5016;
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: #2d3436;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.75rem;
+      border: 2px solid #e8dcc8;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-family: inherit;
+      background: #fffbf7;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #2d5016;
+      box-shadow: 0 0 0 3px rgba(45, 80, 22, 0.1);
+    }
+
+    .modal-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: flex-end;
+    }
+
+    .install-prompt {
+      background: linear-gradient(135deg, #2d5016 0%, #3a6a1f 100%);
+      color: white;
+      padding: 1rem 1.5rem;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      display: none;
+      text-align: center;
+    }
+
+    .install-prompt.show {
+      display: block;
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 1.5rem;
+      }
+
+      .controls {
+        flex-direction: column;
+      }
+
+      .search-bar {
+        max-width: 100%;
+      }
+
+      .phrases {
+        grid-template-columns: 1fr;
+      }
+
+      .phrase-card {
+        min-height: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🎙️ School Irish Soundboard</h1>
+      <p class="subtitle">Ulster Irish phrases for learning</p>
+    </header>
+
+    <div class="install-prompt" id="installPrompt">
+      <p>Install this app to your home screen for quick access and offline use! 📱</p>
+      <button onclick="installApp()" style="margin-top: 0.5rem;">Install App</button>
+    </div>
+
+    <div class="status" id="status"></div>
+
+    <div class="controls">
+      <div class="search-bar">
+        <input 
+          type="text" 
+          id="searchInput" 
+          placeholder="Search phrases (English, Irish, or pronunciation)..."
+          aria-label="Search phrases"
+        >
+      </div>
+      <div class="toggle-group">
+        <button id="toggleIrish" class="toggle-active" aria-pressed="true">
+          Show Irish
+        </button>
+        <button id="toggleSlow" aria-pressed="false">
+          Slow Audio
+        </button>
+        <button id="addPhraseBtn" class="secondary">
+          ➕ Add Phrase
+        </button>
+      </div>
+    </div>
+
+    <div class="categories" id="categoriesContainer"></div>
+  </div>
+
+  <!-- Add Phrase Modal -->
+  <div class="modal" id="addPhraseModal">
+    <div class="modal-content">
+      <h2>Add Your Own Phrase</h2>
+      <form id="addPhraseForm">
+        <div class="form-group">
+          <label for="newEnglish">English:</label>
+          <input type="text" id="newEnglish" placeholder="e.g., Hello" required>
+        </div>
+        <div class="form-group">
+          <label for="newIrish">Irish (Ulster):</label>
+          <input type="text" id="newIrish" placeholder="e.g., Dia duit" required>
+        </div>
+        <div class="form-group">
+          <label for="newPronunciation">Pronunciation (optional):</label>
+          <textarea id="newPronunciation" placeholder="e.g., DEE-uh gwit" rows="2"></textarea>
+        </div>
+        <div class="form-group">
+          <button type="button" id="previewBtn" class="secondary">
+            🔊 Preview
+          </button>
+        </div>
+        <div class="modal-buttons">
+          <button type="button" id="cancelPhraseBtn">Cancel</button>
+          <button type="submit">Save Phrase</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="service-worker-register.js"></script>
+  <script src="audio-engine.js"></script>
+  <script src="phrases-data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
