@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'v2';
+const CACHE_VERSION = 'v3';
 const SHELL_CACHE = `shell-${CACHE_VERSION}`;
 const AUDIO_CACHE = `audio-${CACHE_VERSION}`;
 
@@ -59,16 +59,19 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // App shell: cache-first, network fallback
+  // App shell: network-first, cache fallback — always live when online
   event.respondWith(
-    caches.match(request).then(cached => {
-      const networkFetch = fetch(request).then(response => {
+    fetch(request)
+      .then(response => {
         if (response.ok) {
           caches.open(SHELL_CACHE).then(c => c.put(request, response.clone()));
         }
         return response;
-      });
-      return cached || networkFetch.catch(() => new Response('Offline', { status: 503 }));
-    })
+      })
+      .catch(() =>
+        caches.match(request).then(cached =>
+          cached || new Response('Offline', { status: 503 })
+        )
+      )
   );
 });
