@@ -184,6 +184,7 @@ function applySearch(query) {
   });
 
   document.querySelectorAll('.category').forEach(function(cat) {
+    if (cat.dataset.cat === 'Ár gCuid Frásaí') return; // always visible — contains the Add button
     var hasVisible = Array.from(cat.querySelectorAll('.phrase-card'))
       .some(function(c) { return c.style.display !== 'none'; });
     cat.style.display = hasVisible ? '' : 'none';
